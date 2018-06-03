@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+'''
+wws.py
+'''
+
+import subprocess as sp
+from time import sleep
+
+def dosh(shc):
+    pr = sp.Popen(shc, shell = True, stdout = sp.PIPE)
+    pr.wait()
+    ret = pr.stdout.read().decode("utf-8")
+    return ret
+
+def get_i3_data():
+    rv = dosh("i3-msg -t get_workspaces")
+    rv = rv.replace("true", "True")
+    rv = rv.replace("false", "False")
+    return eval(rv)
+
+def get_vis_ws(i3dat):
+    ov = list()
+    for wsdict in i3dat:
+        if wsdict['visible']:
+            ov.append(wsdict)
+    return ov
+
+def write_nitrogen_conf(displays, wallpapers):
+    with open("/home/cbo77/.config/nitrogen/bg-saved.cfg", "w") as nitrocfg:
+        for disp, wall in zip(displays, wallpapers):
+            nitrocfg.write(f"[xin_{disp}]\n")
+            nitrocfg.write(f"file={wall}\n")
+            nitrocfg.write("mode=5\n")
+            nitrocfg.write("bgcolor=#000000\n\n")
+        
+
+if __name__ == "__main__":
+
+    ws_config = dict()
+
+    with open("/home/cbo77/.config/wws/config") as ws_configf:
+        ws_config = eval(''.join(ws_configf.readlines()))
+
+    rule = ws_config['type']
+    disp_idx = ws_config['display_indexing']
+
+
+    #print("wwsd started, Ctrl-C to quit.")
+    old_i3dat = dict()
+    try:
+        while (True):
+            sleep(0.1)
+            i3dat = get_vis_ws(get_i3_data())
+            if i3dat == old_i3dat:
+                continue
+            else:
+                old_i3dat = i3dat
+
+            #print("workspace changed, re-setting wallpaper")
+            displays = list()
+            wallpapers = list()
+        
+            for visws in i3dat:
+                displays.append(disp_idx[visws['output']])
+                wallpapers.append(ws_config[visws[rule]])
+
+            write_nitrogen_conf(displays, wallpapers)
+            dosh('nitrogen --restore')
+    except KeyboardInterrupt:
+        pass

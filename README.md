@@ -1,7 +1,13 @@
-wws.py
-======
+wwsd
+====
 
 Workspace Wallpaper Setter
 --------------------------
 
-Wallpaper checker and setter for i3-wm.
+Given a rule, sets the wallpaper for the current workspace.
+
+TODO
+----
+ - Un-hardcode 'home' dir
+ - Add config file generator/editor
+ - Add install

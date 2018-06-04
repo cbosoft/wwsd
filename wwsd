@@ -145,15 +145,17 @@ if __name__ == "__main__":
                 exit(0)
             
     
-        old_i3dat = dict()
+        #old_i3dat = dict()
+        old_relevant_params = list()
         try:
             while (True):
                 sleep(sleept)
                 i3dat = get_vis_ws(get_i3_data())
-                if i3dat == old_i3dat:
+                relevant_params = [i3dat[i][rule] for i in range(len(i3dat))]
+                if relevant_params == old_relevant_params:
                     continue
                 else:
-                    old_i3dat = i3dat
+                    old_relevant_params = relevant_params
 
                 displays = list()
                 wallpapers = list()

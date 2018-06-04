@@ -1,4 +1,4 @@
-wwsd
+WWSd
 ====
 
 Workspace Wallpaper Setter
@@ -13,7 +13,7 @@ Depends:
  - `nitrogen` : used to set wallpapers
  - [`docopt`](https://github.com/docopt/docopt) : (python package) for easy commandline options
 
-Shouldn't have too big of a performance hit (although it does sit at ~1% on both of the [i7] machines I've tested it on). If it does become an issue, I'm thinking about re-writing in `c` using something like `libi3ipc` for the i3 interoperability. 
+Shouldn't have too big of a performance hit (although it does sit at ~1% CPU on both of the [i7] machines I've tested it on). If it does become an issue, I'm thinking about re-writing in `c` using something like `libi3ipc` for the i3 interoperability. 
  
 Usage
 -----
@@ -37,7 +37,7 @@ Options:
 Configuration
 -------------
 ### Rules
-The config file is looked for in $HOME/.config/wwsd/config.json by default, this can be overridden by using the commandline option `--config-file=<config-file>`. Config file is a json file (sort of: it will be evaluated by python, so it is python, but its easier to refer to it as JSON). Rules specify which parameter (from the result of `i3-msg -t get_workspaces`) to use to decide the wallpaper.
+The config file is looked for in $HOME/.config/wwsd/config.json by default, this can be overridden by using the commandline option `--config-file=<config-file>`. Config file is a JSON file (sort of: it will be evaluated by python, so it is python, but its easier to refer to it as JSON). Rules specify which parameter (from the result of `i3-msg -t get_workspaces`) to use to decide the wallpaper.
 
 Valid parameters are:
 
@@ -65,7 +65,7 @@ Example config.json:
 ```
 
 ### Display indexing
-Multiple displays are supported in nitrogen, and so they are here. Be default, the displayes are indexed according to their order from `xrandr -q`, but if this is not correct for some reason it can be overridden by adding an object to the config:
+Multiple displays are supported in nitrogen, and so they are here. By default, the displayes are indexed according to their order from `xrandr -q`, but if this is not correct for some reason it can be overridden by adding an object to the config:
 
 ```javascript
 {

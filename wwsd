@@ -16,7 +16,6 @@ Options:
   -s --sleep-time=<sleep-time>   Override default downtime between checks [default: 0.1].
   -g --generate-config           Generates a new config file
   -k --kill-fork                 Kills forked process
-
 '''
 
 import subprocess as sp
@@ -56,6 +55,19 @@ def write_nitrogen_conf(home, displays, wallpapers):
             nitrocfg.write("mode=5\n")
             nitrocfg.write("bgcolor=#000000\n\n")
     return
+
+
+def get_display_indices():
+    rv = dosh("xrandr -q").split('\n')[1:]
+    displays = dict()
+    c = 0
+    for line in rv:
+        if line == '': continue
+        if line[0] == " ": continue
+        if "disconnected" in line: continue
+        displays[line.split(' ')[0]] = c
+        c += 1
+    return displays
 
 
 def generate_config(configfile):
@@ -118,7 +130,11 @@ if __name__ == "__main__":
         print(f"WWSd started, with config file \"{configfile}\"")
     
         rule = ws_config['rule_param']
-        disp_idx = ws_config['display_indexing']
+        
+        try:
+            disp_idx = ws_config['display_indexing']
+        except KeyError:
+            disp_idx = get_display_indices()
         
         if args['--dont-fork']:
             print(">> Process will not be forked. Ctrl-C to quit.")
@@ -144,7 +160,10 @@ if __name__ == "__main__":
             
                 for visws in i3dat:
                     displays.append(disp_idx[visws['output']])
-                    wallpapers.append(ws_config[visws[rule]])
+                    try:
+                        wallpapers.append(ws_config['rules'][visws[rule]])
+                    except KeyError:
+                        wallpapers.append(ws_config['default'])
 
                 write_nitrogen_conf(homedir, displays, wallpapers)
                 dosh('nitrogen --restore')

@@ -1,16 +1,39 @@
 #!/usr/bin/env python3
 '''
-wws.py
+wwsd
+
+Usage:
+  wwsd (-h | --help)
+  wwsd (--begin | --restart) [--config=<config>] [--sleep-time=<sleep-time>] [--generate-config] [--dont-fork]
+  wwsd --generate-config [--config=<config>] 
+  wwsd --kill-fork
+
+Options:
+  -h --help                      Show this message
+  -b --begin                     Start the watcher process
+  -r --restart                   Kills any previous forked processes, starts new watcher
+  -c --config=<config>           Override default config file
+  -s --sleep-time=<sleep-time>   Override default downtime between checks [default: 0.1].
+  -g --generate-config           Generates a new config file
+  -k --kill-fork                 Kills forked process
+
 '''
 
 import subprocess as sp
 from time import sleep
+from pathlib import Path
+from docopt import docopt
+import os
 
 def dosh(shc):
     pr = sp.Popen(shc, shell = True, stdout = sp.PIPE)
     pr.wait()
     ret = pr.stdout.read().decode("utf-8")
     return ret
+
+def replace_tilde_home(string):
+    string = string.replace("~", str(Path.home()))
+    return string
 
 def get_i3_data():
     rv = dosh("i3-msg -t get_workspaces")
@@ -25,46 +48,110 @@ def get_vis_ws(i3dat):
             ov.append(wsdict)
     return ov
 
-def write_nitrogen_conf(displays, wallpapers):
-    with open("/home/cbo77/.config/nitrogen/bg-saved.cfg", "w") as nitrocfg:
+def write_nitrogen_conf(home, displays, wallpapers):
+    with open(f"{home}/.config/nitrogen/bg-saved.cfg", "w") as nitrocfg:
         for disp, wall in zip(displays, wallpapers):
             nitrocfg.write(f"[xin_{disp}]\n")
-            nitrocfg.write(f"file={wall}\n")
+            nitrocfg.write(f"file={replace_tilde_home(wall)}\n")
             nitrocfg.write("mode=5\n")
             nitrocfg.write("bgcolor=#000000\n\n")
-        
+    return
+
+
+def generate_config(configfile):
+    # get displays on this machine
+    # choose wallpaper
+    # etc
+
+    # write config
+    # return wsconfig dictionary
+    return dict()
+
+def kill_fork():
+    
+    python_processes = dosh("pgrep python").split('\n')[:-1]
+    wwsd_processes = dosh("pgrep -f wwsd").split('\n')[:-1]
+
+    print("Killing WWSd processes.")
+    thispid = os.getpid()
+    processes_killed = 0
+    for wpid in wwsd_processes:
+        if wpid in python_processes and thispid != int(wpid):
+            rv = dosh(f"kill {wpid}")
+            if rv != '':
+                print(rv)
+            processes_killed += 1
+    if processes_killed == 0:
+        print(">> No wwsd process exists!")
+    else:
+        print(f">> {processes_killed} processes killed.")
+    
+
 
 if __name__ == "__main__":
 
-    ws_config = dict()
+    args = docopt(__doc__, version="0.2")
+    homedir = str(Path.home())
+    configfile = f"{homedir}/.config/wwsd/config.json" if not args['--config'] else args['--config']
+    sleept = 0.1 if not args['--sleep-time'] else float(args['--sleep-time'])
+    exitafterkill = True
+    if args['--restart']:
+        args['--kill-fork'] = True
+        exitafterkill = False
+        args['--begin'] = True
+    
+    if args['--kill-fork']:
+        kill_fork()
+        if exitafterkill: exit(0)
+    
+    if args['--begin']:
+        try:
+            with open(configfile) as ws_configf:
+                ws_config = eval(''.join(ws_configf.readlines()))
+        except FileNotFoundError:
+            print(f"Config file \"{configfile}\" could not be found.")
+            print("Use")
+            print("    wwsd --generate-config")
+            print("to generate a configfile")
+            exit(-1)
 
-    with open("/home/cbo77/.config/wws/config") as ws_configf:
-        ws_config = eval(''.join(ws_configf.readlines()))
-
-    rule = ws_config['type']
-    disp_idx = ws_config['display_indexing']
-
-
-    #print("wwsd started, Ctrl-C to quit.")
-    old_i3dat = dict()
-    try:
-        while (True):
-            sleep(0.1)
-            i3dat = get_vis_ws(get_i3_data())
-            if i3dat == old_i3dat:
-                continue
-            else:
-                old_i3dat = i3dat
-
-            #print("workspace changed, re-setting wallpaper")
-            displays = list()
-            wallpapers = list()
+        print(f"WWSd started, with config file \"{configfile}\"")
+    
+        rule = ws_config['rule_param']
+        disp_idx = ws_config['display_indexing']
         
-            for visws in i3dat:
-                displays.append(disp_idx[visws['output']])
-                wallpapers.append(ws_config[visws[rule]])
+        if args['--dont-fork']:
+            print(">> Process will not be forked. Ctrl-C to quit.")
+        else:
+            pid = os.fork()
+            if pid != 0:
+                print(f">> Process has been forked. PID={pid}")
+                exit(0)
+            
+    
+        old_i3dat = dict()
+        try:
+            while (True):
+                sleep(sleept)
+                i3dat = get_vis_ws(get_i3_data())
+                if i3dat == old_i3dat:
+                    continue
+                else:
+                    old_i3dat = i3dat
 
-            write_nitrogen_conf(displays, wallpapers)
-            dosh('nitrogen --restore')
-    except KeyboardInterrupt:
-        pass
+                displays = list()
+                wallpapers = list()
+            
+                for visws in i3dat:
+                    displays.append(disp_idx[visws['output']])
+                    wallpapers.append(ws_config[visws[rule]])
+
+                write_nitrogen_conf(homedir, displays, wallpapers)
+                dosh('nitrogen --restore')
+        except KeyboardInterrupt:
+            pass
+        exit(0)
+
+    elif args['--generate-config']:
+        generate_config(configfile)
+        exit(0)

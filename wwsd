@@ -115,21 +115,27 @@ if __name__ == "__main__":
     if args['--kill-fork']:
         kill_fork()
         if exitafterkill: exit(0)
-    
+    #syer = 0
     if args['--begin']:
         try:
             with open(configfile) as ws_configf:
                 ws_config = eval(''.join(ws_configf.readlines()))
         except FileNotFoundError:
-            print(f"Config file \"{configfile}\" could not be found.")
+            print(f"\nConfig file \"{configfile}\" could not be found.")
             print("Use")
             print("    wwsd --generate-config")
             print("to generate a configfile")
             exit(-1)
+        except SyntaxError as se:
+            print(f"\nConfig file \"{configfile}\" contains an error:")
+            print("{}:".format(se.msg))
+            print("|")
+            print("|  {}".format(se.text if not '\n' in se.text else se.text[:-1]))
+            print("| {}^".format(" " * se.offset))
+            print("Remember config files must be evaulatable python!")
+            exit(-1)
 
         print(f"WWSd started, with config file \"{configfile}\"")
-    
-        rule = ws_config['rule_param']
         
         try:
             disp_idx = ws_config['display_indexing']
@@ -144,29 +150,29 @@ if __name__ == "__main__":
                 print(f">> Process has been forked. PID={pid}")
                 exit(0)
             
-    
-        #old_i3dat = dict()
-        old_relevant_params = list()
+        old_i3dat = dict()
         try:
             while (True):
                 sleep(sleept)
                 i3dat = get_vis_ws(get_i3_data())
-                relevant_params = [i3dat[i][rule] for i in range(len(i3dat))]
-                if relevant_params == old_relevant_params:
+                if i3dat == old_i3dat:
                     continue
                 else:
-                    old_relevant_params = relevant_params
+                    old_i3dat = i3dat
 
                 displays = list()
                 wallpapers = list()
             
-                for visws in i3dat:
-                    displays.append(disp_idx[visws['output']])
-                    try:
-                        wallpapers.append(ws_config['rules'][visws[rule]])
-                    except KeyError:
-                        wallpapers.append(ws_config['default'])
+                for visible_workspace in i3dat:
+                    displays.append(disp_idx[visible_workspace['output']])
 
+                    wallpaper = False
+                    for rule, (value, wallpaper) in ws_config['rules'].items():
+                        if visible_workspace[rule] == value:
+                            wallpaper = wallpaper
+                            break
+                    if not wallpaper: wallpaper = ws_config['default']
+                    wallpapers.append(wallpaper)
                 write_nitrogen_conf(homedir, displays, wallpapers)
                 dosh('nitrogen --restore')
         except KeyboardInterrupt:

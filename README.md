@@ -66,21 +66,12 @@ Example config.json:
 In the above, workspaces indexed 1 and 2 are individually set wallpapers A and B respectively, all of the workspaces on output 'HDMI-2' are set wallpaper C, and the rest of the workspaces are set a default.
 
 ### Display indexing
-Multiple displays are supported in nitrogen, and so they are here. By default, the displayes are indexed according to their order from `xrandr -q`, but if this is not correct for some reason it can be overridden by adding an object to the config:
+Multiple displays are supported in nitrogen, and so they are here. By default, the displayes are indexed according to their order from `xrandr -q`, but if this is not correct for some reason it can be overridden by adding a dictionary object to the config:
 
 ```javascript
-{
-	'param' : 'num',
-	'rules' : {
-		0:'/path/to/a/wallpaper.jpg',
-		1:'/path/to/a/wallpaper.jpg',
-		2:'/path/to/a/wallpaper.jpg'// and so on...
-	},
-	'default' : '/path/to/default/wallpaper.jpg',
-	'display_indexing' : {
-		'HDMI-1' : 1, // whatever your output is called, corresponding to a 0-based index
-		'HDMI-2' : 0  // in xrandr, these displays would be swapped.
-	}
+'display_indexing' : {
+	'HDMI-1' : 1, // whatever your output is called, corresponding to a 0-based index
+	'HDMI-2' : 0  // in xrandr, these displays would be swapped.
 }
 ```
 

@@ -143,8 +143,10 @@ if __name__ == "__main__":
             disp_idx = get_display_indices()
         
         if args['--dont-fork']:
+            fg = True
             print(">> Process will not be forked. Ctrl-C to quit.")
         else:
+            fg = False
             pid = os.fork()
             if pid != 0:
                 print(f">> Process has been forked. PID={pid}")
@@ -170,11 +172,11 @@ if __name__ == "__main__":
                     for rule, value, wallpaper in ws_config['rules']:
                         if visible_workspace[rule] == value:
                             wallpaper = wallpaper
-                            print(f"Wallpaper set to {wallpaper} because of {rule}: {visible_workspace[rule]}")
+                            if fg: print(f"Wallpaper set to \"{wallpaper}\" because of {rule}: {visible_workspace[rule]}")
                             break
                     if not wallpaper:
                         wallpaper = ws_config['default']
-                        print(f"Wallpaper set to {wallpaper} [default]")
+                        if fg: print(f"Wallpaper set to default \"{wallpaper}\"")
                     wallpapers.append(wallpaper)
                 write_nitrogen_conf(homedir, displays, wallpapers)
                 dosh('nitrogen --restore')

@@ -167,11 +167,14 @@ if __name__ == "__main__":
                     displays.append(disp_idx[visible_workspace['output']])
 
                     wallpaper = False
-                    for rule, (value, wallpaper) in ws_config['rules'].items():
+                    for rule, value, wallpaper in ws_config['rules']:
                         if visible_workspace[rule] == value:
                             wallpaper = wallpaper
+                            print(f"Wallpaper set to {wallpaper} because of {rule}: {visible_workspace[rule]}")
                             break
-                    if not wallpaper: wallpaper = ws_config['default']
+                    if not wallpaper:
+                        wallpaper = ws_config['default']
+                        print(f"Wallpaper set to {wallpaper} [default]")
                     wallpapers.append(wallpaper)
                 write_nitrogen_conf(homedir, displays, wallpapers)
                 dosh('nitrogen --restore')

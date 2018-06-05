@@ -55,9 +55,9 @@ Example config.json:
 ```javascript
 {
 	'rules' : {
-		num    : [1,        '/path/to/wallpaper_A.jpg'],
-		num    : [2,        '/path/to/wallpaper_B.jpg'],
-		output : ['HDMI-2', '/path/to/wallpaper_C.jpg']
+		'num'    : [1,        '/path/to/wallpaper_A.jpg'],
+		'num'    : [2,        '/path/to/wallpaper_B.jpg'],
+		'output' : ['HDMI-2', '/path/to/wallpaper_C.jpg']
 	},
 	'default' : '/path/to/default/wallpaper.jpg'
 }

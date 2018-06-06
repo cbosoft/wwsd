@@ -69,13 +69,10 @@ def get_display_indices():
 
 
 def generate_config(configfile):
-    # get displays on this machine
-    # choose wallpaper
-    # etc
-
-    # write config
-    # return wsconfig dictionary
-    return dict()
+    df = {'rules' : { }, 'default' : '~/a/path/to/a/default/wallpaper.jpg'}
+    with open(configfile, "w") as conffile:
+        json.dump(df, conffile, indent=2)
+    return df
 
 def kill_fork():
     
@@ -95,8 +92,6 @@ def kill_fork():
         print(">> No wwsd process exists!")
     else:
         print(f">> {processes_killed} processes killed.")
-    
-
 
 if __name__ == "__main__":
 
@@ -113,7 +108,6 @@ if __name__ == "__main__":
     if args['--kill-fork']:
         kill_fork()
         if exitafterkill: exit(0)
-    #syer = 0
     if args['--begin']:
         try:
             with open(configfile) as confjson:
@@ -173,7 +167,6 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             pass
         exit(0)
-
     elif args['--generate-config']:
         generate_config(configfile)
         exit(0)

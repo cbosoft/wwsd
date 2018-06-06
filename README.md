@@ -37,7 +37,7 @@ Options:
 Configuration
 -------------
 ### Rules
-The config file is looked for in $HOME/.config/wwsd/config.json by default, this can be overridden by using the commandline option `--config-file=<config-file>`. Config file is a JSON file (sort of: it will be evaluated by python, so it is python, but its easier to refer to it as JSON). Rules specify which parameter (from the result of `i3-msg -t get_workspaces`) to use to decide the wallpaper.
+The config file is looked for in $HOME/.config/wwsd/config.json by default, this can be overridden by using the commandline option `--config-file=<config-file>`. Config file is a JSON file containing 'rule' objects. Rules specify which parameter (from the result of `i3-msg -t get_workspaces`) to use to decide the wallpaper.
 
 Valid parameters are:
 
@@ -54,12 +54,12 @@ Example config.json:
 
 ```javascript
 {
-	'rules' : {
-		'num'    : [1,        '/path/to/wallpaper_A.jpg'],
-		'num'    : [2,        '/path/to/wallpaper_B.jpg'],
-		'output' : ['HDMI-2', '/path/to/wallpaper_C.jpg']
-	},
-	'default' : '/path/to/default/wallpaper.jpg'
+	"rules" : [
+		["num",    1,        "/path/to/wallpaper_A.jpg"],
+		["num",    2,        "/path/to/wallpaper_B.jpg"],
+		["output", "HDMI-2", "/path/to/wallpaper_C.jpg"]
+	],
+	"default" : "/path/to/default/wallpaper.jpg"
 }
 ```
 
@@ -69,9 +69,9 @@ In the above, workspaces indexed 1 and 2 are individually set wallpapers A and B
 Multiple displays are supported in nitrogen, and so they are here. By default, the displayes are indexed according to their order from `xrandr -q`, but if this is not correct for some reason it can be overridden by adding a dictionary object to the config:
 
 ```javascript
-'display_indexing' : {
-	'HDMI-1' : 1, // whatever your output is called, corresponding to a 0-based index
-	'HDMI-2' : 0  // in xrandr, these displays would be swapped.
+"display_indexing" : {
+	"HDMI-1" : 1, // whatever your output is called, corresponding to a 0-based index
+	"HDMI-2" : 0  // in xrandr, these displays would be swapped.
 }
 ```
 

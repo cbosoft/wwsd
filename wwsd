@@ -21,8 +21,9 @@ Options:
 import subprocess as sp
 from time import sleep
 from pathlib import Path
-from docopt import docopt
 import os
+import json
+from docopt import docopt
 
 def dosh(shc):
     pr = sp.Popen(shc, shell = True, stdout = sp.PIPE)
@@ -35,10 +36,7 @@ def replace_tilde_home(string):
     return string
 
 def get_i3_data():
-    rv = dosh("i3-msg -t get_workspaces")
-    rv = rv.replace("true", "True")
-    rv = rv.replace("false", "False")
-    return eval(rv)
+    return json.loads(dosh("i3-msg -t get_workspaces"))
 
 def get_vis_ws(i3dat):
     ov = list()
@@ -118,21 +116,13 @@ if __name__ == "__main__":
     #syer = 0
     if args['--begin']:
         try:
-            with open(configfile) as ws_configf:
-                ws_config = eval(''.join(ws_configf.readlines()))
+            with open(configfile) as confjson:
+                ws_config = json.load(confjson)
         except FileNotFoundError:
             print(f"\nConfig file \"{configfile}\" could not be found.")
             print("Use")
             print("    wwsd --generate-config")
             print("to generate a configfile")
-            exit(-1)
-        except SyntaxError as se:
-            print(f"\nConfig file \"{configfile}\" contains an error:")
-            print("{}:".format(se.msg))
-            print("|")
-            print("|  {}".format(se.text if not '\n' in se.text else se.text[:-1]))
-            print("| {}^".format(" " * se.offset))
-            print("Remember config files must be evaulatable python!")
             exit(-1)
 
         print(f"WWSd started, with config file \"{configfile}\"")

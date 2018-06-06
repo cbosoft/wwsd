@@ -17,12 +17,12 @@ source=("wwsd::git+https://github.com/cbosoft/wwsd.git#branch=master")
 md5sums=('SKIP')
 
 pkgver() {
-    cd "$srcdir"
+    cd "${srcdir}/wwsd"
     printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
 package() {
-    cd "$srcdir""
+    cd "${srcdir}"
     # python script
     install -vDm 755 "wwsd/wwsd" "${pkgdir}/usr/bin/wwsd"
 }

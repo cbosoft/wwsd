@@ -79,4 +79,4 @@ TODO
 ----
  - Add interop with other parts of i3-msg. `get_tree` especially could be cool; different wallpapers depending on the current active application or something
  - Add config file generator/editor
- - Add install
+ - Use [`i3ipc-python`](https://github.com/acrisci/i3ipc-python) to get when workspaces have changed, rather than dumbly checking every 100ms

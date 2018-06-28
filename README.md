@@ -6,7 +6,7 @@ Workspace Wallpaper Setter
 
 i3wm Workspace wallpaper setter python script: given a rule in config file, changes the wallpaper for each display.
 
-Uses i3-msg to get the currently displayed workspaces, then uses a rule specified in a config file to set the wallpaper.
+When currently focussed workspace is changed, gets info about the currently displayed workspaces then uses a user-specified rule to set the wallpaper.
 
 Depends:
  - `i3wm` : what this was made for
@@ -37,7 +37,7 @@ Options:
 Configuration
 -------------
 ### Rules
-The config file is looked for in $HOME/.config/wwsd/config.json by default, this can be overridden by using the commandline option `--config-file=<config-file>`. Config file is a JSON file containing 'rule' objects. Rules specify which parameter (from the result of `i3-msg -t get_workspaces`) to use to decide the wallpaper.
+The config file is looked for in $HOME/.config/wwsd/config.json by default, this can be overridden by using the commandline option `--config-file=<config-file>`. Config file is a JSON file containing 'rule' objects. Rules specify which parameter (from the JSON result of `i3-msg -t get_workspaces`) to use to decide the wallpaper.
 
 Valid parameters are:
 

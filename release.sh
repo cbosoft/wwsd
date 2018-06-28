@@ -1,7 +1,6 @@
-# Put Updated PKGBUILD onto AUR
+# Put Updated PKGBUILD and .SRCINFO onto AUR
 cp PKGBUILD ../wwsd-git/PKGBUILD
 cd ../wwsd-git
-git commit PKGBUILD
 makepkg --printsrcinfo > .SRCINFO
-git commit .SRCINFO
+git commit PKGBUILD .SRCINFO
 git push

@@ -14,7 +14,7 @@ makedepends=('git')
 
 source=(wwsd)
 
-md5sums=(ce7c4b259cc72afcd88ebd221ba40ed9)
+md5sums=()
 
 pkgver() {
     echo 1

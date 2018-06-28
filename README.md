@@ -19,7 +19,7 @@ Usage
 ```bash
 Usage:
   wwsd (-h | --help)
-  wwsd (--begin | --restart) [--config=<config>] [--sleep-time=<sleep-time>] [--dont-fork]
+  wwsd (--begin | --restart) [--config=<config>] [--dont-fork]
   wwsd --generate-config [--config=<config>] 
   wwsd --kill-fork
 
@@ -28,7 +28,6 @@ Options:
   -b --begin                     Start the watcher process
   -r --restart                   Kills any previous forked processes, starts new watcher process
   -c --config=<config>           Override default config file
-  -s --sleep-time=<sleep-time>   Override default downtime between checks [default: 0.1].
   -g --generate-config           Generates a new config file
   -k --kill-fork                 Kills forked process
   -d --dont-fork                 Does not fork to new process

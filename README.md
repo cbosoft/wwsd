@@ -9,8 +9,8 @@ i3wm Workspace wallpaper setter python script: given a rule in config file, chan
 When currently focussed workspace is changed, gets info about the currently displayed workspaces then uses a user-specified rule to set the wallpaper.
 
 Depends:
- - `i3wm` : what this was made for
- - `nitrogen` : used to set wallpapers
+ - [`i3wm`](https://github.com/i3/i3) : what this was made for
+ - [`nitrogen`](https://github.com/l3ib/nitrogen) : used to set wallpapers
  - [`docopt`](https://github.com/docopt/docopt) : for easy commandline options
  - [`i3ipc-python`](https://github.com/acrisci/i3ipc-python) : for better i3 interoperability
  

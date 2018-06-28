@@ -11,16 +11,15 @@ Uses i3-msg to get the currently displayed workspaces, then uses a rule specifie
 Depends:
  - `i3wm` : what this was made for
  - `nitrogen` : used to set wallpapers
- - [`docopt`](https://github.com/docopt/docopt) : (python package) for easy commandline options
-
-Shouldn't have too big of a performance hit (although it does sit at ~1% CPU on both of the [i7] machines I've tested it on). If it does become an issue, I'm thinking about re-writing in `c` using something like `libi3ipc` for the i3 interoperability. 
+ - [`docopt`](https://github.com/docopt/docopt) : for easy commandline options
+ - [`i3ipc-python`](https://github.com/acrisci/i3ipc-python) : for better i3 interoperability
  
 Usage
 -----
 ```bash
 Usage:
   wwsd (-h | --help)
-  wwsd (--begin | --restart) [--config=<config>] [--sleep-time=<sleep-time>] [--generate-config] [--dont-fork]
+  wwsd (--begin | --restart) [--config=<config>] [--sleep-time=<sleep-time>] [--dont-fork]
   wwsd --generate-config [--config=<config>] 
   wwsd --kill-fork
 
@@ -32,6 +31,7 @@ Options:
   -s --sleep-time=<sleep-time>   Override default downtime between checks [default: 0.1].
   -g --generate-config           Generates a new config file
   -k --kill-fork                 Kills forked process
+  -d --dont-fork                 Does not fork to new process
 ```
 
 Configuration
@@ -78,5 +78,3 @@ Multiple displays are supported in nitrogen, and so they are here. By default, t
 TODO
 ----
  - Add interop with other parts of i3-msg. `get_tree` especially could be cool; different wallpapers depending on the current active application or something
- - Add config file generator/editor
- - Use [`i3ipc-python`](https://github.com/acrisci/i3ipc-python) to get when workspaces have changed, rather than dumbly checking every 100ms

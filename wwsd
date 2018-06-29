@@ -135,7 +135,8 @@ def setup():
         print(">> Process will not be forked. Ctrl-C to quit.")
     else:
         fg = False
-        if os.fork() != 0:
+        pid = os.fork()
+        if pid != 0:
             print(f">> Process has been forked. PID={pid}")
             exit(0)
 

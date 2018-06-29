@@ -140,7 +140,7 @@ def setup():
             print(f">> Process has been forked. PID={pid}")
             exit(0)
 
-def main(i3, e):
+def main(*args):
     global old_i3dat
     global old_wallpapers
     global wsconfig
@@ -172,7 +172,7 @@ def main(i3, e):
 
 
 if __name__ == "__main__":
-
+    
     args = docopt(__doc__, version="")
     homedir = str(Path.home())
     configfile = f"{homedir}/.config/wwsd/config.json" if not args['--config'] else args['--config']
@@ -188,12 +188,14 @@ if __name__ == "__main__":
         if exitafterkill: exit(0)
         
     if args['--begin']:
-        main()
+
         setup()
         
         i3 = i3ipc.Connection()
         i3.on('workspace::focus', main)
-                
+        
+        main()
+        
         try: i3.main()        
         except KeyboardInterrupt: pass
         

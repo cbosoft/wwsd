@@ -188,7 +188,7 @@ if __name__ == "__main__":
         if exitafterkill: exit(0)
         
     if args['--begin']:
-        
+        main()
         setup()
         
         i3 = i3ipc.Connection()

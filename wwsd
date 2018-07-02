@@ -12,18 +12,19 @@ config file.
 
 Usage:
   wwsd (-h | --help)
-  wwsd (--begin | --restart) [--config=<config>] [--dont-fork]
+  wwsd (--begin | --restart) [--config=<config>] [--dont-fork] [--wall-gen-interval=<wall-gen-interval>]
   wwsd --generate-config [--config=<config>] 
   wwsd --kill-fork
 
 Options:
-  -h --help                      Show this message
-  -b --begin                     Start the watcher process
-  -r --restart                   Kills any previous forked processes, starts new watcher
-  -c --config=<config>           Override default config file
-  -g --generate-config           Generates a new config file
-  -k --kill-fork                 Kills forked process
-  -d --dont-fork                 Does not fork to new process
+  -h --help                                   Show this message
+  -b --begin                                  Start the watcher process
+  -r --restart                                Kills any previous forked processes, starts new watcher
+  -c --config=<config>                        Override default config file
+  -g --generate-config                        Generates a new config file
+  -k --kill-fork                              Kills forked process
+  -d --dont-fork                              Does not fork to new process
+  -i --wall-gen-interval=<wall-gen-interval>  Interval between running of gen script(s) [Default: 0.1]
 '''
 
 from docopt import docopt
@@ -39,9 +40,10 @@ old_wallpapers = None
 wsconfig = None
 disp_idx = None
 fg = False
+gen_interval = 0.1
 
 def dosh(shc):
-    pr = sp.Popen(shc, shell = True, stdout = sp.PIPE)
+    pr = sp.Popen(shc, shell = True, stdout=sp.PIPE, stderr=sp.PIPE)
     pr.wait()
     ret = pr.stdout.read().decode("utf-8")
     return ret
@@ -170,6 +172,16 @@ def main(*args):
     return
         
 
+def generate():
+    global gen_interval
+    
+    if os.fork() == 0:
+        while(True):
+            for command in wsconfig['wallgen']:
+                command = command.replace('~', homedir)
+                dosh(command)
+            dosh("nitrogen --restore")
+            sleep(gen_interval)
 
 if __name__ == "__main__":
     
@@ -177,6 +189,7 @@ if __name__ == "__main__":
     homedir = str(Path.home())
     configfile = f"{homedir}/.config/wwsd/config.json" if not args['--config'] else args['--config']
     exitafterkill = True
+    gen_interval = float(args['--wall-gen-interval'])
     
     if args['--restart']:
         args['--kill-fork'] = True
@@ -190,6 +203,9 @@ if __name__ == "__main__":
     if args['--begin']:
 
         setup()
+
+        if "wallgen" in wsconfig.keys():
+            generate()
         
         i3 = i3ipc.Connection()
         i3.on('workspace::focus', main)

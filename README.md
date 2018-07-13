@@ -36,7 +36,7 @@ Options:
 Configuration
 -------------
 ### Rules
-The config file is looked for in $HOME/.config/wwsd/config.json by default, this can be overridden by using the commandline option `--config-file=<config-file>`. Config file is a JSON file containing 'rule' objects. Rules specify which parameter (from the JSON result of `i3-msg -t get_workspaces`) to use to decide the wallpaper.
+The config file is looked for in `$HOME/.config/wwsd/config.json` by default, this can be overridden by using the commandline option `--config-file=<config-file>`. Config file is a JSON file containing 'rule' objects. Rules specify which parameter (from the JSON result of `i3-msg -t get_workspaces`) to use to decide the wallpaper.
 
 Valid parameters are:
 
@@ -46,10 +46,8 @@ Valid parameters are:
  - `focused` (bool)
  - `output` (str)
  - `urgent` (bool)
- 
-Rules are a dictionary where the keys are the parameter to use, and the values are lists of parameter-values and wallpapers. If the rule is not specified, a default value is used.
 
-Example config.json:
+### Example config.json:
 
 ```javascript
 {

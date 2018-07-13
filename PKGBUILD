@@ -1,6 +1,6 @@
 # Maintainer: Chris Boyle <christopher.boyle.101 at strath dot ac dot uk>
 pkgname=wwsd-git
-pkgver=r54.f4d72e2
+pkgver=r57.5991f83
 pkgrel=1
 
 pkgdesc="Sets wallpaper depending on user-set rules"

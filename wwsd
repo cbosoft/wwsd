@@ -4,7 +4,7 @@ wwsd
 
 Sets system wallpaper depending on user-configurable 
 rules. See github for more information: 
-    https://github.com/cbosoft/wwsd-git
+    https://github.com/cbosoft/wwsd
 
 Minimal startup: create/edit ~/.config/wwsd/config.json
 as per your needs, then add "exec wwsd" to your i3 
